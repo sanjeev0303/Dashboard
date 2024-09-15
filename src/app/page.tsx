@@ -1,10 +1,13 @@
+import Summary from '@/components/dashboard/summary'
 import React from 'react'
 
 type Props = {}
 
 const page = (props: Props) => {
   return (
-    <div>Dashboard</div>
+   <div className='p-4 grid gap-5'>
+    <Summary />
+   </div>
   )
 }
 
