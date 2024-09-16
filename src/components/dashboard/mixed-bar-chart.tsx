@@ -76,7 +76,9 @@ export function MixedGraph() {
    title="Traffic Bar Chart"
    subTitle="Showing Visitors from Different Countries"
    >
-     <ChartContainer config={chartConfig}>
+     <ChartContainer config={chartConfig}
+     className="mx-auto aspect-square w-full max-h-[400px] mt-10"
+     >
           <BarChart
             accessibilityLayer
             data={chartData}
