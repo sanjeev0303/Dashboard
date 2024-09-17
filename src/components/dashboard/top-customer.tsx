@@ -15,7 +15,7 @@ export type Customers = {
     id: string;
     name: string;
     email: string;
-    order?: number;
+    orders?: number;
     image: string;
 }
 

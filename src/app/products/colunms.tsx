@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
+import { formatPrice } from "@/utils/formatPrice";
 
 export type Products = {
   id: number | string;
@@ -31,10 +32,24 @@ export const columns: ColumnDef<Products>[] = [
   {
     accessorKey: "price",
     header: "Price",
+    cell: ({ row }) => {
+        const totalPrice = row.getValue(
+          "price"
+        ) as number;
+
+        return <>{formatPrice(totalPrice)}</>;
+      },
   },
   {
     accessorKey: "revenue",
     header: "Revenue",
+    cell: ({ row }) => {
+        const totalRevenue = row.getValue(
+          "revenue"
+        ) as number;
+
+        return <>{formatPrice(totalRevenue)}</>;
+      },
   },
   {
     accessorKey: "image",

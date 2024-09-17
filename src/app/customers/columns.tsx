@@ -19,7 +19,7 @@ export type Customers = {
   id: number;
   name: string;
   email: string;
-  order?: number;
+  orders?: number;
   image: string;
 };
 

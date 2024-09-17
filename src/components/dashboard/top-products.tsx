@@ -6,6 +6,7 @@ import Image from "next/image";
 import { DataTable } from "../ui/data-table";
 import { ProductsDummyData } from "@/lib/constants";
 import AnalyticsCard from "./analytic-card"
+import { formatPrice } from "@/utils/formatPrice";
 
 export type TopProducts = {
     id: number;
@@ -23,6 +24,13 @@ export const topProductsColumns: ColumnDef<TopProducts>[] = [
     {
       accessorKey: "revenue",
       header: "Revenue",
+      cell: ({ row }) => {
+        const totalRevenue = row.getValue(
+          "revenue"
+        ) as number;
+
+        return <>{formatPrice(totalRevenue)}</>;
+      },
     },
     {
       accessorKey: "image",
