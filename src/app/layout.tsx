@@ -5,6 +5,7 @@ import Navbar from "@/components/navigation/navbar";
 import { ThemeProvider } from "@/providers/theme-provider";
 import Sidebar from "@/components/navigation/sidebar";
 import ToasterProvider from "@/providers/toast-provider";
+import { auth } from "@/server/auth";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,11 +24,12 @@ export const metadata: Metadata = {
   description: "E-Commerce Dashboard",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+    const session = await auth()
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -38,7 +40,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
             <ToasterProvider/>
-          <Navbar />
+          <Navbar session={session} />
           <main className="flex">
             <section className="min-h-screen flex-none">
               <Sidebar />
