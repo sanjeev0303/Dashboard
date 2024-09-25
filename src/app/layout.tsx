@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/navigation/navbar";
 import { ThemeProvider } from "@/providers/theme-provider";
 import Sidebar from "@/components/navigation/sidebar";
+import ToasterProvider from "@/providers/toast-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,6 +37,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+            <ToasterProvider/>
           <Navbar />
           <main className="flex">
             <section className="min-h-screen flex-none">

@@ -1,15 +1,32 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { useMenuStore } from '@/store/toggle-menu-store'
 import { motion } from 'framer-motion'
 import LogOutButton from '../authentication/logout-button'
 import MenuLinks from './menu-links'
+import useRouteCheck from '@/hooks/useRouteCheck'
+import { useEffect } from 'react'
 
 type Props = {}
 
 const Sidebar = (props: Props) => {
     const { isOpen } = useMenuStore()
+    const [loading, setIsLoading] = useState(true)
+    const loginRoute = useRouteCheck(["login"]);
+    const registerRoute = useRouteCheck(["register"])
+    const onbordingRoute = useRouteCheck(["onbording"])
+
+    useEffect(() => {
+        if (!loginRoute && !registerRoute && !onbordingRoute) {
+            setIsLoading(false)
+        }
+    }, [loginRoute, registerRoute, onbordingRoute])
+
+  if(loading || loginRoute || registerRoute || onbordingRoute) {
+    return null;
+  }
+
   return (
     <motion.div
     initial={{width: isOpen ? 80 : 250}}

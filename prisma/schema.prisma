@@ -45,6 +45,8 @@ model User {
   name          String?
   email         String?   @unique
   image         String?   @default("no-image")
+  userName      String
+  hashedPassword String
   isApproved    Boolean   @default(false)
   isAdmin       Boolean   @default(false)
   location      String    @default("no-location")

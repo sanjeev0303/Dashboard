@@ -1,8 +1,11 @@
+import RegisterForm from '@/components/authentication/register-form'
 import React from 'react'
 
 const RegisterPage = () => {
   return (
-    <div>RegisterPage</div>
+  <div className='h-screen w-full flex justify-center items-center p-6'>
+     <RegisterForm />
+  </div>
   )
 }
 
