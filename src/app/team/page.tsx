@@ -1,32 +1,24 @@
-import React from 'react'
-import AnalyticsCard from '@/components/dashboard/analytic-card'
-import TeamCard from '@/components/teams/team-card'
-import TeamList from '@/components/teams/team-list'
+import { z } from "zod";
+import TeamList from "@/components/teams/team-list";
+import { TeamSchema } from "@/types/team-schema";
+import { auth } from "@/server/auth";
+import { db } from "@/server/db";
+import { redirect } from "next/navigation";
+import { GetRoleStatus } from "@/server/actions/get-role-status-action";
 
-export interface Team {
-    isAdmin: boolean
-    name: string
-    image: string
-    isApproved: boolean
-    email: string
-}
+export type Team = z.infer<typeof TeamSchema>;
 
-async function getTeam(): Promise<Team[]>{
-    const res = await fetch(
-      "https://66a6d52223b29e17a1a39127.mockapi.io/team",
-      { cache: "no-store" }
-    );
-    const data = await res.json();
-    return data;
-  }
+export default async function Page() {
+  const team = await db.user.findMany({});
+  const session = await auth();
 
-const TeamPage = async() => {
-    const data = await getTeam();
+  if (!session) redirect("/");
+
+  const role = await GetRoleStatus();
+
   return (
-    <div className='p-6'>
-        <TeamList data={data} />
+    <div className="p-6">
+      <TeamList data={team} role={role!} />
     </div>
-  )
+  );
 }
-
-export default TeamPage
