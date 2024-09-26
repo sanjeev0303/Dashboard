@@ -1,30 +1,25 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { Edit, EyeIcon, MoreHorizontal, Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 
-
+import DeleteOrder from "@/components/orders/delete-order-modal";
+import ViewOrderModal from "@/components/orders/view-order-modal";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { OrderSchema } from "@/types/order-schema";
 import { formatDate } from "@/utils/formatDate";
 import { formatPrice } from "@/utils/formatPrice";
+import { useState } from "react";
+import { z } from "zod";
 
-export type Orders = {
-  id: string | number;
-  orderNumber: string;
-  totalAmount: number;
-  data: number;
-};
 
-export const columns: ColumnDef<Orders>[] = [
+export const columns: ColumnDef<z.infer<typeof OrderSchema>>[] = [
   {
     accessorKey: "orderNumber",
     header: "Order Number",
@@ -33,9 +28,7 @@ export const columns: ColumnDef<Orders>[] = [
     accessorKey: "totalAmount",
     header: "Total Amount",
     cell: ({ row }) => {
-      const totalAmount = row.getValue(
-        "totalAmount"
-      ) as number;
+      const totalAmount = row.getValue("totalAmount") as number;
 
       return <>{formatPrice(totalAmount)}</>;
     },
@@ -46,21 +39,18 @@ export const columns: ColumnDef<Orders>[] = [
     cell: ({ row }) => {
       const dateTimeStamp = row.getValue("date") as number;
       const dateObject = new Date(dateTimeStamp);
-      return (
-        <span className="text-nowrap">
-          {formatDate(dateObject)}
-        </span>
-      );
+      return <span className="text-nowrap">{formatDate(dateObject)}</span>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const [openDeletemodal, setOpenDeleteModal] = useState(false);
-      const customers = row.original;
-      const customerId = customers.id;
+      const order = row.original;
+      const orderId = order.id;
+      const [viewModalOpen, setViewModalOpen] = useState(false);
+      const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-      if (!customerId) {
+      if (!orderId) {
         return;
       }
 
@@ -74,27 +64,27 @@ export const columns: ColumnDef<Orders>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem className="gap-2">
-                <EyeIcon height={17} width={17} />
-                <span> View Order</span>
+              <DropdownMenuItem onClick={() => setViewModalOpen(true)}>
+                View Order Details
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setOpenDeleteModal(true)}
-                className="gap-2"
-              >
-                <Trash2Icon height={17} width={17} />
-                <span> Delete Order</span>
+              <DropdownMenuItem onClick={() => setDeleteModalOpen(true)}>
+                Delete Order
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <div className="hidden">
+            <DeleteOrder
+              id={orderId}
+              open={deleteModalOpen}
+              onOpenChange={setDeleteModalOpen}
+            />
 
-          {/* <div className="hidden">
-                <DeleteCustomerModal
-                  id={customerId}
-                  open={openDeletemodal}
-                  onOpenChange={setOpenDeleteModal}
-                />
-              </div> */}
+            <ViewOrderModal
+              order={order}
+              open={viewModalOpen}
+              onOpenChange={setViewModalOpen}
+            />
+          </div>
         </>
       );
     },

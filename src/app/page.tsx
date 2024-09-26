@@ -5,34 +5,30 @@ import { RadarGraph } from "@/components/dashboard/radar-chart";
 import Summary from "@/components/dashboard/summary";
 import TopCustomer from "@/components/dashboard/top-customer";
 import TopProducts from "@/components/dashboard/top-products";
-import { Customers } from "@/components/dashboard/top-customer";
 import { redirect } from "next/navigation";
 import { auth } from "@/server/auth";
+import { db } from "@/server/db";
 
 type Props = {};
 
-async function getCustomers(): Promise<Customers[]> {
-  const res = await fetch(
-    "https://66a6d52223b29e17a1a39127.mockapi.io/Customers",
-    { cache: "no-store" }
-  );
-  const data = await res.json();
-  return data;
-}
-
-
-
 const Home = async (props: Props) => {
+  const customers = await db.customers.findMany({});
+  const products = await db.product.findMany({});
 
-    const session  = await auth()
+  const session = await auth();
 
-    // CHECK IF A USER IS SIGNED IN
-    if (!session) {
-        redirect("/login")
-    }
+  // CHECK IF A USER IS SIGNED IN
+  if (!session) {
+    redirect("/login");
+  }
 
-  const data = await getCustomers();
-  const topCustomer = data.sort((a, b) =>(b.orders || 0) - (a.orders || 0) ).slice(0, 6);
+  const topCustomer = customers
+    .sort((a, b) => (b.orders || 0) - (a.orders || 0))
+    .slice(0, 6);
+
+  const topProduct = products
+    .sort((a, b) => (b.revenue || 0) - (a.revenue || 0))
+    .slice(0, 6);
   return (
     <div className="p-4 grid gap-5">
       <Summary />
@@ -42,7 +38,12 @@ const Home = async (props: Props) => {
       </div>
 
       <div className="grid grid-cols-2 gap-10 md:grid-cols-1">
-        <TopProducts  id={0} name="" revenue={0} price={0} image=""  />
+        <TopProducts
+          data={topProduct.map((product) => ({
+            ...product,
+            image: product.image ?? "",
+          }))}
+        />
         <PieGraph />
       </div>
 

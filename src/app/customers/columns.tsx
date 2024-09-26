@@ -14,16 +14,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
+import { Customers } from "@prisma/client";
+import { z } from "zod";
+import { CustomersSchema } from "@/types/customer-schema";
+import DeleteCustomerModal from "@/components/customers/delete-customer-modal";
 
-export type Customers = {
-  id: number;
-  name: string;
-  email: string;
-  orders?: number;
-  image: string;
-};
 
-export const columns: ColumnDef<Customers>[] = [
+export const columns: ColumnDef<z.infer<typeof CustomersSchema>>[] = [
   {
     accessorKey: "name",
     header: "Name",
@@ -37,12 +34,14 @@ export const columns: ColumnDef<Customers>[] = [
     header: "Image",
     cell: ({ row }) => {
       const imageUrl = row.getValue("image") as string;
+
       return (
         <Image
           src={imageUrl}
-          alt={row.getValue("name")}
           width={50}
           height={50}
+          alt={`Product Image`}
+          className="border-2 border-primary"
         />
       );
     },
@@ -57,39 +56,35 @@ export const columns: ColumnDef<Customers>[] = [
       if (!customerId) {
         return;
       }
-
       return (
         <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem className="gap-2">
-                <Edit height={17} width={17} />
-                <span> Edit Customer</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setOpenDeleteModal(true)}
-                className="gap-2"
-              >
-                <Trash2Icon height={17} width={17} />
-                <span> Delete Customer</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+            >
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={() => setOpenDeleteModal(true)}
+            >
+              Delete Customer
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-          {/* <div className="hidden">
-                <DeleteCustomerModal
-                  id={customerId}
-                  open={openDeletemodal}
-                  onOpenChange={setOpenDeleteModal}
-                />
-              </div> */}
-        </>
+        <div className="hidden">
+          <DeleteCustomerModal
+            id={customerId}
+            open={openDeletemodal}
+            onOpenChange={setOpenDeleteModal}
+          />
+        </div>
+      </>
       );
     },
   },

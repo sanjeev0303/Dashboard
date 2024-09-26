@@ -15,41 +15,33 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { formatPrice } from "@/utils/formatPrice";
+import EditProduct from "@/components/products/edit-product-modal";
+import DeleteProduct from "@/components/products/delete-product-modal";
+import { z } from "zod";
+import { ProductSchema } from "@/types/product-schema";
 
-export type Products = {
-  id: number | string;
-  name: string;
-  price: number;
-  revenue?: number;
-  image: string;
-};
-
-export const columns: ColumnDef<Products>[] = [
+export const columns: ColumnDef<z.infer<typeof ProductSchema>>[] = [
   {
     accessorKey: "name",
-    header: "Name",
+    header: "Product Name",
   },
   {
     accessorKey: "price",
     header: "Price",
     cell: ({ row }) => {
-        const totalPrice = row.getValue(
-          "price"
-        ) as number;
+      const totalPrice = row.getValue("price") as number;
 
-        return <>{formatPrice(totalPrice)}</>;
-      },
+      return <>{formatPrice(totalPrice)}</>;
+    },
   },
   {
     accessorKey: "revenue",
     header: "Revenue",
     cell: ({ row }) => {
-        const totalRevenue = row.getValue(
-          "revenue"
-        ) as number;
+      const totalRevenue = row.getValue("revenue") as number;
 
-        return <>{formatPrice(totalRevenue)}</>;
-      },
+      return <>{formatPrice(totalRevenue)}</>;
+    },
   },
   {
     accessorKey: "image",
@@ -69,11 +61,12 @@ export const columns: ColumnDef<Products>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const [openDeletemodal, setOpenDeleteModal] = useState(false);
-      const customers = row.original;
-      const customerId = customers.id;
+      const product = row.original;
+      const productId = product.id;
+      const [editModalOpen, setEditModalOpen] = useState(false);
+      const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-      if (!customerId) {
+      if (!productId) {
         return;
       }
 
@@ -87,27 +80,27 @@ export const columns: ColumnDef<Products>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem className="gap-2">
-                <Edit height={17} width={17} />
-                <span> Edit Product</span>
+              <DropdownMenuItem onSelect={() => setEditModalOpen(true)}>
+                Edit Product
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setOpenDeleteModal(true)}
-                className="gap-2"
-              >
-                <Trash2Icon height={17} width={17} />
-                <span> Delete Product</span>
+              <DropdownMenuItem onSelect={() => setDeleteModalOpen(true)}>
+                Delete Product
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* <div className="hidden">
-                <DeleteCustomerModal
-                  id={customerId}
-                  open={openDeletemodal}
-                  onOpenChange={setOpenDeleteModal}
-                />
-              </div> */}
+          <div className="hidden">
+            <EditProduct
+              id={productId}
+              open={editModalOpen}
+              onOpenChange={setEditModalOpen}
+            />
+            <DeleteProduct
+              id={productId}
+              open={deleteModalOpen}
+              onOpenChange={setDeleteModalOpen}
+            />
+          </div>
         </>
       );
     },

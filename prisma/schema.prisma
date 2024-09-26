@@ -66,3 +66,28 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map("verificationtokens")
 }
+
+
+model Product {
+  id      String  @id @default(cuid())
+  name    String
+  price   Float
+  image   String?
+  revenue Int
+}
+
+model Orders {
+  id           String   @id @default(cuid())
+  customerName String
+  address      String
+  totalAmount  Int
+  orderNumber  Int
+  date         DateTime @default(now())
+}
+
+model Customers {
+  id     String @id @default(cuid())
+  name   String
+  orders Int
+  image  String
+}

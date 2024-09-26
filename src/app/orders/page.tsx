@@ -4,13 +4,20 @@ import { DataTable } from "@/components/ui/data-table";
 import { ordersDummyData } from "@/lib/constants";
 import React from "react";
 import { columns } from "./columns";
+import { auth } from "@/server/auth";
+import { redirect } from "next/navigation";
+import { db } from "@/server/db";
+import AddOrder from "@/components/orders/add-order-modal";
 
-const OrdersPage = () => {
+const OrdersPage = async () => {
+    const session = await auth();
+  if (!session) redirect("/login");
+  const orders = await db.orders.findMany({});
   return (
    <section className="p-6">
      <AnalyticsCard title="Products" subTitle="Show All Products">
-      <Button className="mb-3 text-white">Add New Order</Button>
-      <DataTable columns={columns} data={ordersDummyData} />
+      <AddOrder />
+      <DataTable columns={columns} data={orders} />
     </AnalyticsCard>
    </section>
   );
